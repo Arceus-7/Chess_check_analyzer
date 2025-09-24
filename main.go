@@ -29,8 +29,8 @@ const (
 	NotFileH     = ^FileH
 )
 
-// Position holds bitboards per piece and color.
-// All bitboards use Little-Endian Rank-File mapping: a1=LSB (0), h8=MSB (63).
+//Position holds bitboards per piece and color.
+//Little-Endian Rank-File mapping: a1=LSB (0), h8=MSB (63).
 type Position struct {
 	whitePawns, whiteKnights, whiteBishops, whiteRooks, whiteQueens, whiteKing uint64
 	blackPawns, blackKnights, blackBishops, blackRooks, blackQueens, blackKing uint64
@@ -57,8 +57,7 @@ func (p Position) KingSquare(c Color) (int, bool) {
 	return bits.TrailingZeros64(bb), true
 }
 
-// ---------------------- FEN parsing ------------------------
-
+//FEN parsing
 func parseFEN(fen string) (Position, error) {
 	// Accept full FEN but only piece placement is needed for check.
 	parts := strings.Fields(fen)
@@ -77,7 +76,7 @@ func parseFEN(fen string) (Position, error) {
 	// FEN ranks go 8 -> 1. Our mapping is row 0 = rank1, row 7 = rank8.
 	for r := 0; r < 8; r++ {
 		fenRank := ranks[r]
-		boardRank := 7 - r // map: first FEN rank is 8 -> index 7
+		boardRank := 7 - r // map: FEN rank is 8 -> index 7
 		file := 0
 		for _, ch := range fenRank {
 			switch {
@@ -131,7 +130,7 @@ func setPieceAt(p *Position, ch rune, sq int) {
 	}
 }
 
-// ---------------------- Masks and attacks ------------------------
+// Masks and attacks
 
 // Rank mask: all bits on the same rank as sq (including sq).
 func rankMask(sq int) uint64 {
@@ -182,7 +181,7 @@ func antiDiagMask(sq int) uint64 {
 }
 
 // Hyperbola Quintessence generalized form.
-// See chessprogramming.org Hyperbola_Quintessence (Java section).
+// See chessprogramming.org Hyperbola_Quintessence.
 // Given:
 // - occ: occupancy bitboard (all pieces)
 // - mask: mask of the line (rank/file/diag/antidiag) including sq
